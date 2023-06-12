@@ -3,13 +3,23 @@ import { Github } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
 import { MutatingDots } from 'react-loader-spinner'
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify'
+import { Roboto_Mono } from 'next/font/google'
+import { useRouter } from 'next/router'
 
-export default function Home() {
+const roboto = Roboto_Mono({
+  subsets: ['latin'],
+  weight: '400',
+  variable: '--font-roboto',
+})
+
+export default function Signin() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
   const [loading, setLoading] = useState(false)
+
+  const router = useRouter()
 
   async function handleLogin(e) {
     e.preventDefault()
@@ -19,19 +29,17 @@ export default function Home() {
 
     try {
       const response = await axios.post(`${process.env.NEXT_PUBLIC_BUBBLE_API_URL}/users/signin`, body)
-      toast('Em breve você será direcionado para a página principal')
-      setLoading(false)
+      router.push('/home')
     } catch (error) {
       toast('Dados incorretos!')
       setLoading(false)
     }
 
-    setLoading(false)
   }
 
   return (
     <main
-      className={`flex h-screen flex-col items-center justify-between px-12 bg-gradient-to-r from-gray-900 to-teal-700`}
+      className={`${roboto.variable} font-roboto flex h-screen flex-col items-center justify-between px-12 bg-gradient-to-r from-gray-900 to-teal-700`}
     >
       <ToastContainer theme='dark' />
       <div className={'flex w-full max-w-screen-xl h-full relative '}>

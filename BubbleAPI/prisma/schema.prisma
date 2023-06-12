@@ -17,3 +17,29 @@ model users {
   password String
   createAt DateTime? @default(now()) @db.Timestamp(6)
 }
+
+model problems {
+  id          Int                 @id @default(autoincrement())
+  title       String
+  description String
+  level       problems_levels     @relation(fields: [levelId], references: [id])
+  levelId     Int
+  exemples    problems_exemples[]
+  code        String
+  createdAt   DateTime?           @default(now()) @db.Timestamp(6)
+}
+
+model problems_levels {
+  id       Int        @id @default(autoincrement())
+  name     String
+  problems problems[]
+}
+
+model problems_exemples {
+  id          Int      @id @default(autoincrement())
+  problem     problems @relation(fields: [problemId], references: [id])
+  problemId   Int
+  input       String
+  output      String
+  explanation String?
+}
