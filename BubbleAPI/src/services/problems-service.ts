@@ -8,7 +8,12 @@ async function getProblemById(id: number) {
   return await problemsRepository.getProblemById(id)
 }
 
+async function getProblemTestCases(id: number) {
+  return await problemsRepository.getProblemTestCases(id)
+}
+
 export default {
   getProblemsList,
-  getProblemById
+  getProblemById,
+  getProblemTestCases
 }

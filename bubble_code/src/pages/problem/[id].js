@@ -32,11 +32,11 @@ export default function Problem() {
   }, [])
 
   return (
-    <main className={`flex ${roboto.variable} text-sm font-roboto justify-center bg-pallet-0 w-screen h-screen`}>
+    <main className={`flex ${roboto.variable} text-sm font-roboto justify-center bg-pallet-2 w-screen h-screen`}>
       <NavBarCoding />
       <div className="flex w-full p-2 gap-2 mt-9">
         <ProblemResume problem={problem} />
-        <Coder />
+        <Coder problem={problem} />
       </div>
     </main>
   )

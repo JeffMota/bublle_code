@@ -5,63 +5,83 @@ import problemsService from "../services/problems-service.js";
 
 
 export async function runCode(req: Request, res: Response) {
+
   let myCode =
     'const console = []\n' + JSON.parse(req.body.code) + 'sum([2,7,11,15], 9)'
   myCode = myCode.replaceAll('console.log', 'console.push')
+  // let myCode =
+  //   'const console = []\n' + req.body.code
+  // myCode = myCode.replaceAll('console.log', 'console.push')
+
+  const problemId = Number(req.params.id)
 
   try {
-    const newCode = babel.transform(myCode,
-      {
-        "presets": ["@babel/preset-env"]
-      }).code
+    const testCases = await problemsService.getProblemTestCases(problemId)
 
-    const myInterpreter = new Interpreter(newCode)
-    myInterpreter.run()
+    const result = []
 
-    let expected = '[0,1]'
-    let output = ''
-    let status = 'wrong'
+    // return res.send(myCode + '\n' + testCases[0].functionStr)
 
+    testCases.forEach(tc => {
 
-    if (!myInterpreter.value) {
-      output = String(myInterpreter.value)
-    } else {
-      if (myInterpreter.value.properties) {
-        let aux = []
-        for (let i of myInterpreter.value.properties) {
-          aux.push(i)
-        }
-        output = JSON.stringify(aux)
+      const cod = myCode + '\n' + tc.functionStr
+
+      //Testar se posso tranformar todo o código antese
+      const newCode = babel.transform(cod,
+        {
+          "presets": ["@babel/preset-env"]
+        }).code
+
+      const myInterpreter = new Interpreter(newCode)
+      myInterpreter.run()
+
+      let output = ''
+      let status = 'wrong'
+
+      if (!myInterpreter.value) {
+        output = String(myInterpreter.value)
       } else {
-        output = JSON.stringify(myInterpreter.value)
-      }
-    }
-
-    if (expected === output || output === '[1,0]') status = 'right'
-    let cons = null
-    if (myInterpreter.globalObject.properties.console.properties.length > 0) {
-      let aux = []
-      for (let i of myInterpreter.globalObject.properties.console.properties) {
-        if (i.class && i.class == "Array") {
-          let auxx = []
-          for (let j of i.properties) {
-            auxx.push(j)
+        if (myInterpreter.value.properties) {
+          let aux = []
+          for (let i of myInterpreter.value.properties) {
+            aux.push(i)
           }
-          aux.push(JSON.stringify(auxx))
-        } else aux.push(i)
+          output = JSON.stringify(aux)
+        } else {
+          output = JSON.stringify(myInterpreter.value)
+        }
       }
-      cons = aux
-    }
 
-    res.status(200).send(
-      {
-        console: cons,
-        input: 'arr = [2,7,11,15], num = 9',
-        output,
-        expected,
-        status
+      if (output === tc.expectedOutput) status = 'right'
+      let cons = null
+      if (myInterpreter.globalObject.properties.console.properties.length > 0) {
+        let aux = []
+        for (let i of myInterpreter.globalObject.properties.console.properties) {
+          if (i.class && i.class == "Array") {
+            let auxx = []
+            for (let j of i.properties) {
+              auxx.push(j)
+            }
+            aux.push(JSON.stringify(auxx))
+          } else aux.push(i)
+        }
+        cons = aux
       }
-    )
+
+      result.push(
+        {
+          id: tc.id,
+          console: cons,
+          input: tc.input,
+          output,
+          expected: tc.expectedOutput,
+          status
+        }
+      )
+
+    })
+
+    res.send(result)
   } catch (error) {
     res.send(error.message)
   }

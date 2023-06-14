@@ -3,10 +3,19 @@ import { javascript } from '@codemirror/lang-javascript';
 import CodeMirror from '@uiw/react-codemirror';
 import { Settings } from 'lucide-react';
 import Console from './console';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
-export default function Coder() {
-  const [code, setCode] = useState(`function sum(arr, num){\n  \n};`)
+export default function Coder({ problem }) {
+  const [code, setCode] = useState(``)
+  const [problemId, setProblemId] = useState(null)
+
+  useEffect(() => {
+    if (problem) {
+      setCode(problem.code)
+      setProblemId(problem.id)
+    }
+  }, [problem])
+
   const onChange = useCallback((value) => {
     setCode(value);
   }, []);
@@ -26,7 +35,7 @@ export default function Coder() {
           onChange={onChange}
         />
       </div>
-      <Console code={code} />
+      <Console code={code} problemId={problemId} />
     </div>
   )
 }

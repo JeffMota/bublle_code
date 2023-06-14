@@ -1,20 +1,24 @@
 import axios from "axios"
 import { ChevronUp, ChevronDown } from "lucide-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import CaseResult from "./caseResult"
 // import * as babel from '@babel/core'
 
-export default function Console({ code }) {
+export default function Console({ code, problemId }) {
   const [open, setOpen] = useState(false)
   const [loadingCode, setLoadingCode] = useState(false)
+  const [caseSelected, setCaseSelected] = useState(0)
 
   const [codeResponse, setCodeResponse] = useState(null)
 
   async function runCode() {
     setOpen(true)
     setLoadingCode(true)
+    setCodeResponse(null)
     const body = { code: JSON.stringify(code) }
+
     try {
-      const response = await axios.post(process.env.NEXT_PUBLIC_BUBBLE_API_URL + '/problems/run', body)
+      const response = await axios.post(process.env.NEXT_PUBLIC_BUBBLE_API_URL + `/problems/run/${problemId}`, body)
       // return console.log(response.data)
       setCodeResponse(response.data)
       setLoadingCode(false)
@@ -38,31 +42,16 @@ export default function Console({ code }) {
             <div className="flex-1 items-center overflow-y-scroll justify-between px-6 w-full h-12 bg-pallet-1">
               {codeResponse ?
                 <div>
-                  <div className="flex w-full my-2 text-lg">
-                    {codeResponse.status === 'right' ?
-                      <h2 className="text-green-500">Resposta Correta</h2>
-                      :
-                      <h2 className="text-red-500">Resposta Errada</h2>
+                  <div className="flex gap-3 mt-2">
+                    {
+                      codeResponse.map((res, i) =>
+                        <div className="flex items-center gap-2 cursor-pointer bg-pallet-0 hover:bg-pallet-5 px-3 py-2 rounded-md" onClick={() => setCaseSelected(i)} key={res.id}>
+                          Caso {i + 1}
+                          <span className={`flex rounded-full w-1 h-1 ${res.status === 'right' ? 'bg-green-500' : 'bg-red-500'}`} />
+                        </div>)
                     }
                   </div>
-                  <div>
-                    <h2>Entrada</h2>
-                    <div className="flex mt-1 mb-3 h-8 rounded-md px-3 items-center bg-pallet-0">{codeResponse.input}</div>
-                  </div>
-                  {codeResponse.console &&
-                    <div>
-                      <h2>Stdout</h2>
-                      <h2 className="flex mt-1 mb-3 h-8 rounded-md px-3 items-center bg-pallet-0">{codeResponse.console}</h2>
-                    </div>
-                  }
-                  <div>
-                    <h2>Saída</h2>
-                    <h2 className="flex mt-1 mb-3 h-8 rounded-md px-3 items-center bg-pallet-0">{codeResponse.output || codeResponse}</h2>
-                  </div>
-                  <div>
-                    <h2>Esperado</h2>
-                    <h2 className="flex mt-1 mb-6 h-8 rounded-md px-3 items-center bg-pallet-0">{codeResponse.expected}</h2>
-                  </div>
+                  <CaseResult caseSelected={codeResponse[caseSelected]} />
                 </div>
                 :
                 <div className="flex h-full items-center justify-center">{loadingCode ? "Loading..." : "Você deve rodar o seu código primeiro"}</div>

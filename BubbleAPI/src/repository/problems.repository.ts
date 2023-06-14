@@ -20,6 +20,7 @@ async function getProblemById(id: number) {
       id
     },
     select: {
+      id: true,
       title: true,
       description: true,
       code: true,
@@ -33,7 +34,15 @@ async function getProblemById(id: number) {
   })
 }
 
+async function getProblemTestCases(id: number) {
+  return await prisma.problems_testcase.findMany(
+    {
+      where: { problemId: id }
+    })
+}
+
 export default {
   getProblemsList,
-  getProblemById
+  getProblemById,
+  getProblemTestCases
 }

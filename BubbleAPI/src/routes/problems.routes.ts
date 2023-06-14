@@ -3,7 +3,7 @@ import { getProblemsList, getProblemById, runCode } from "../controllers/problem
 
 const problemRouter = Router()
 
-problemRouter.post('/run', runCode)
+problemRouter.post('/run/:id', runCode)
 problemRouter.get('/list', getProblemsList)
 problemRouter.get('/:id', getProblemById)
 
