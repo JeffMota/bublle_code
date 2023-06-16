@@ -1,8 +1,8 @@
-import userRepository from "../repository/user.repository.js"
-import bcrypt from "bcrypt"
-import jwt from "jsonwebtoken"
-import { signInParams } from "../protocols.js"
 import { invalidCredentialsError } from "../errors/unhautorized.erros.js"
+import userRepository from "../repository/user.repository.js"
+import { signInParams } from "../protocols.js"
+import jwt from "jsonwebtoken"
+import bcrypt from "bcrypt"
 
 async function createUser(email: string, password: string, userName: string) {
   const user = await userRepository.getUserByEmail(email)
