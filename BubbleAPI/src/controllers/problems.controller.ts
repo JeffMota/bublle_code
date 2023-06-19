@@ -7,7 +7,7 @@ import problemsService from "../services/problems-service.js";
 export async function runCode(req: Request, res: Response) {
 
   let myCode =
-    'const console = []\n' + JSON.parse(req.body.code) + 'sum([2,7,11,15], 9)'
+    'const console = []\n' + JSON.parse(req.body.code)
   myCode = myCode.replaceAll('console.log', 'console.push')
   // let myCode =
   //   'const console = []\n' + req.body.code
@@ -53,19 +53,19 @@ export async function runCode(req: Request, res: Response) {
       }
 
       if (output === tc.expectedOutput) status = 'right'
-      let cons = null
+      let cons = []
       if (myInterpreter.globalObject.properties.console.properties.length > 0) {
-        let aux = []
         for (let i of myInterpreter.globalObject.properties.console.properties) {
           if (i.class && i.class == "Array") {
             let auxx = []
             for (let j of i.properties) {
               auxx.push(j)
             }
-            aux.push(JSON.stringify(auxx))
-          } else aux.push(i)
+            cons.push(JSON.stringify(auxx))
+          } else {
+            cons.push(i)
+          }
         }
-        cons = aux
       }
 
       result.push(
@@ -97,8 +97,7 @@ export async function getProblemsList(req: Request, res: Response) {
 }
 
 export async function getProblemById(req: Request, res: Response) {
-  const id = Number(req.params.id
-  )
+  const id = Number(req.params.id)
   try {
     const problem = await problemsService.getProblemById(id)
     return res.send(problem)

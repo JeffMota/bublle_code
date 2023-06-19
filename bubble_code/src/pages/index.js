@@ -29,6 +29,7 @@ export default function Signin() {
 
     try {
       const response = await axios.post(`${process.env.NEXT_PUBLIC_BUBBLE_API_URL}/users/signin`, body)
+      localStorage.setItem('user', JSON.stringify(response.data))
       router.push('/home')
     } catch (error) {
       toast('Dados incorretos!')

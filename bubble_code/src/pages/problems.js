@@ -1,8 +1,10 @@
 import LoadingText from '@/components/loadingText'
 import NavBar from '@/components/navbar'
 import ProblemTag from '@/components/problemTag'
+import getToken from '@/services/headerToken'
 import axios from 'axios'
 import { Roboto_Mono } from 'next/font/google'
+import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { ToastContainer, toast } from 'react-toastify'
 
@@ -15,13 +17,21 @@ const roboto = Roboto_Mono({
 export default function Problems() {
   const [list, setList] = useState('')
 
+  const router = useRouter()
+
   useEffect(() => {
     async function fetchList() {
       try {
-        const response = await axios.get(process.env.NEXT_PUBLIC_BUBBLE_API_URL + '/problems/list')
+        const config = getToken()
+        const response = await axios.get(process.env.NEXT_PUBLIC_BUBBLE_API_URL + '/problems/list', config)
         setList(response.data)
       } catch (error) {
-        toast(error.message)
+        toast('Não foi possível carregar os problemas')
+        if (error.response.status === 401) {
+          setTimeout(() => {
+            router.push('/')
+          }, 2000)
+        }
       }
     }
     fetchList()

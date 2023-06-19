@@ -5,6 +5,7 @@ async function getProblemsList() {
     select: {
       id: true,
       title: true,
+      description: true,
       level: {
         select: {
           name: true

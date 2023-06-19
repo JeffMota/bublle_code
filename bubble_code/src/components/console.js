@@ -2,12 +2,16 @@ import axios from "axios"
 import { ChevronUp, ChevronDown } from "lucide-react"
 import { useEffect, useState } from "react"
 import CaseResult from "./caseResult"
+import getToken from "@/services/headerToken"
+import { useRouter } from "next/router"
 // import * as babel from '@babel/core'
 
 export default function Console({ code, problemId }) {
   const [open, setOpen] = useState(false)
   const [loadingCode, setLoadingCode] = useState(false)
   const [caseSelected, setCaseSelected] = useState(0)
+
+  const router = useRouter()
 
   const [codeResponse, setCodeResponse] = useState(null)
 
@@ -16,14 +20,22 @@ export default function Console({ code, problemId }) {
     setLoadingCode(true)
     setCodeResponse(null)
     const body = { code: JSON.stringify(code) }
+    const config = getToken()
 
     try {
-      const response = await axios.post(process.env.NEXT_PUBLIC_BUBBLE_API_URL + `/problems/run/${problemId}`, body)
+      const response = await axios.post(process.env.NEXT_PUBLIC_BUBBLE_API_URL + `/problems/run/${problemId}`, body, config)
       // return console.log(response.data)
       setCodeResponse(response.data)
       setLoadingCode(false)
     } catch (error) {
       console.log(error.message)
+      toast('Não foi rodar o código :(')
+
+      if (error.response.status === 401) {
+        setTimeout(() => {
+          router.push('/')
+        }, 2000)
+      }
       setLoadingCode(false)
     }
   }

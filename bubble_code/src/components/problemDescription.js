@@ -17,10 +17,10 @@ export default function ProblemDescription({ problem }) {
       </div>
 
       <p className="flex">
-        {prob ? JSON.parse(JSON.stringify(prob.description)) : <LoadingText />}
+        {prob ? prob.description : <p className="flex flex-col gap-2 w-full"><LoadingText /> <LoadingText /> <LoadingText width="1/2" /></p>}
       </p>
 
-      {prob ? prob.exemples.map((e, i) => <ExempleBox key={e.id} exemple={e} index={i} />) : <div className="gap-2 w-full h-64 p-3 rounded-lg bg-pallet-0"></div>}
+      {prob ? prob.exemples.map((e, i) => <ExempleBox key={e.id} exemple={e} index={i} />) : <div className="gap-2 w-full h-20 p-3 mt-6 rounded-lg bg-pallet-0"></div>}
     </div>
   )
 }

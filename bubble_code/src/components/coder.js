@@ -1,9 +1,9 @@
 import { solarizedDark } from '@uiw/codemirror-theme-solarized';
+import { useCallback, useEffect, useState } from 'react';
 import { javascript } from '@codemirror/lang-javascript';
 import CodeMirror from '@uiw/react-codemirror';
 import { Settings } from 'lucide-react';
 import Console from './console';
-import { useCallback, useEffect, useState } from 'react';
 
 export default function Coder({ problem }) {
   const [code, setCode] = useState(``)

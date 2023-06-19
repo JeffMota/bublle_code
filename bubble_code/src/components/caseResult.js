@@ -12,7 +12,7 @@ export default function CaseResult({ caseSelected }) {
         <h2>Entrada</h2>
         <div className="flex mt-1 mb-3 h-8 rounded-md px-3 items-center bg-pallet-0">{caseSelected.input}</div>
       </div>
-      {caseSelected.console &&
+      {caseSelected.console.length > 0 &&
         <div>
           <h2>Stdout</h2>
           <h2 className="flex mt-1 mb-3 h-8 rounded-md px-3 items-center bg-pallet-0">{caseSelected.console}</h2>
