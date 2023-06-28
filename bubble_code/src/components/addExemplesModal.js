@@ -11,19 +11,14 @@ const roboto = Roboto_Mono({
 })
 const bebasNeue = Bebas_Neue({ subsets: ['latin'], weight: ['400'], variable: '--font-bebasNeue' })
 
-export default function AddExemplesModal({ close, setCurrentModal }) {
-  const [list, setList] = useState([])
-
-  const [input, setInput] = useState('')
-  const [output, setOutput] = useState('')
-  const [explanation, setExplanation] = useState('')
+export default function AddExemplesModal({ close, setCurrentModal, listOfExemples, setListOfExemples, input, setInput, output, setOutput, explanation, setExplanation }) {
 
   function addProblem(e) {
     e.preventDefault()
 
-    let aux = [...list, { input, output, explanation }]
+    let aux = [...listOfExemples, { input, output, explanation }]
     console.log(aux)
-    setList(aux)
+    setListOfExemples(aux)
   }
 
   return (
@@ -59,7 +54,7 @@ export default function AddExemplesModal({ close, setCurrentModal }) {
         </form>
 
         <div className="flex flex-col px-2 h-80 overflow-scroll bg-pallet-5 w-72 rounded-md ">
-          {list && list.map((e, i) => <ExempleBox key={i} exemple={e} index={i} />)}
+          {listOfExemples && listOfExemples.map((e, i) => <ExempleBox key={i} exemple={e} index={i} />)}
         </div>
 
       </div>
@@ -72,7 +67,7 @@ export default function AddExemplesModal({ close, setCurrentModal }) {
           Voltar ao problema
         </button>
         <button onClick={() => setCurrentModal('testCases')} className='flex items-center justify-center rounded-md hover:bg-pallet-2 w-40 bg-pallet-3'>
-          Adicionar exemplos
+          Casos de teste
           <ChevronRight />
         </button>
       </div>

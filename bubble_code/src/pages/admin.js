@@ -31,8 +31,50 @@ export default function Admin() {
   const [level, setLevel] = useState('Fácil')
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
+  const [listOfExemples, setListOfExemples] = useState([])
+  const [listOfCases, setListOfCases] = useState([])
+
+  const [input, setInput] = useState('')
+  const [output, setOutput] = useState('')
+  const [explanation, setExplanation] = useState('')
+
+  const [caseInput, setCaseInput] = useState('')
+  const [expectedOutput, setExpectedOutput] = useState('')
+  const [callFunction, setCallFunction] = useState('')
 
   const router = useRouter()
+
+  async function handleSaveProblem() {
+    setCurrentModal('problem')
+
+    const config = getToken()
+    const body = {
+      problem: {
+        title,
+        code,
+        levelId: level === 'Facil' ? 1 : level === "Média" ? 2 : 3,
+        description,
+      },
+      exemples: listOfExemples,
+      testCases: listOfCases
+    }
+
+    try {
+      const response = await axios.post(process.env.NEXT_PUBLIC_BUBBLE_API_URL + `/problems/add`, body, config)
+      toast("Problema salvo com sucesso :)")
+
+    } catch (error) {
+      console.log(error.message)
+      toast('Não foi possível salvar o problema')
+
+      if (error.response.status === 401) {
+        setTimeout(() => {
+          router.push('/')
+        }, 2000)
+      }
+      setLoadingCode(false)
+    }
+  }
 
   useEffect(() => {
     async function fetchList() {
@@ -126,8 +168,31 @@ export default function Admin() {
                 setDescription={setDescription}
                 setCurrentModal={setCurrentModal}
               /> :
-              currentModal === 'exemples' ? <AddExemplesModal setCurrentModal={setCurrentModal} close={setAddingNewProblem} /> :
-                <AddTestCasesModal setCurrentModal={setCurrentModal} close={setAddingNewProblem} />
+              currentModal === 'exemples' ?
+                <AddExemplesModal
+                  setCurrentModal={setCurrentModal}
+                  close={setAddingNewProblem}
+                  listOfExemples={listOfExemples}
+                  setListOfExemples={setListOfExemples}
+                  input={input}
+                  setInput={setInput}
+                  output={output}
+                  setOutput={setOutput}
+                  explanation={explanation}
+                  setExplanation={setExplanation}
+                /> :
+                <AddTestCasesModal
+                  setCurrentModal={setCurrentModal}
+                  close={setAddingNewProblem}
+                  listOfCases={listOfCases}
+                  setListOfCases={setListOfCases}
+                  caseInput={caseInput}
+                  setCaseInput={setCaseInput}
+                  expectedOutput={expectedOutput}
+                  setExpectedOutput={setExpectedOutput}
+                  callFunction={callFunction}
+                  setCallFunction={setCallFunction}
+                />
           }
         </div>
       }
