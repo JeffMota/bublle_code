@@ -10,7 +10,7 @@ const roboto = Roboto_Mono({
 })
 const bebasNeue = Bebas_Neue({ subsets: ['latin'], weight: ['400'], variable: '--font-bebasNeue' })
 
-export default function AddTestCasesModal({ close, setCurrentModal, caseInput, setCaseInput, expectedOutput, setExpectedOutput, callFunction, setCallFunction, listOfCases, setListOfCases }) {
+export default function AddTestCasesModal({ handleSaveProblem, close, setCurrentModal, caseInput, setCaseInput, expectedOutput, setExpectedOutput, callFunction, setCallFunction, listOfCases, setListOfCases }) {
 
   function addCase(e) {
     e.preventDefault()
@@ -63,7 +63,7 @@ export default function AddTestCasesModal({ close, setCurrentModal, caseInput, s
         <button onClick={() => setCurrentModal('exemples')} className='w-40 bg-pallet-0'>
           Voltar aos exemplos
         </button>
-        <button onClick={() => setCurrentModal('testCases')} className='flex items-center justify-center gap-2 rounded-md hover:bg-green-700 w-40 bg-green-500'>
+        <button onClick={handleSaveProblem} className='flex items-center justify-center gap-2 rounded-md hover:bg-green-700 w-40 bg-green-500'>
           Salvar problema
           <Check />
         </button>

@@ -48,11 +48,27 @@ export default function Admin() {
     setCurrentModal('problem')
 
     const config = getToken()
+
+    if (title === '' || code === '' || level === '' || description === '') {
+      toast('Todos os campos precisam ser preenchidos')
+      setCurrentModal('problem')
+    }
+
+    if (listOfExemples.length == 0) {
+      toast('Deve haver ao menos um exemplo')
+      setCurrentModal('exemples')
+    }
+
+    if (listOfCases.length == 0) {
+      toast('Deve haver ao menos um caso de test')
+      setCurrentModal('testCases')
+    }
+
     const body = {
       problem: {
         title,
         code,
-        levelId: level === 'Facil' ? 1 : level === "Média" ? 2 : 3,
+        levelId: level === 'Fácil' ? 1 : level === "Média" ? 2 : 3,
         description,
       },
       exemples: listOfExemples,
@@ -62,7 +78,7 @@ export default function Admin() {
     try {
       const response = await axios.post(process.env.NEXT_PUBLIC_BUBBLE_API_URL + `/problems/add`, body, config)
       toast("Problema salvo com sucesso :)")
-
+      fetchList()
     } catch (error) {
       console.log(error.message)
       toast('Não foi possível salvar o problema')
@@ -72,7 +88,6 @@ export default function Admin() {
           router.push('/')
         }, 2000)
       }
-      setLoadingCode(false)
     }
   }
 
@@ -192,6 +207,7 @@ export default function Admin() {
                   setExpectedOutput={setExpectedOutput}
                   callFunction={callFunction}
                   setCallFunction={setCallFunction}
+                  handleSaveProblem={handleSaveProblem}
                 />
           }
         </div>

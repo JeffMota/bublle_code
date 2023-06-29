@@ -105,3 +105,14 @@ export async function getProblemById(req: Request, res: Response) {
     res.status(500).send('Was not possible to get the problem')
   }
 }
+
+export async function addProblem(req: Request, res: Response) {
+  const { problem, exemples, testCases } = req.body
+
+  try {
+    await problemsService.addProblem(problem, exemples, testCases)
+    return res.status(201)
+  } catch (error) {
+    res.status(500).send('Was not possible to save the problem')
+  }
+}
