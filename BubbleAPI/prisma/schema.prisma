@@ -38,7 +38,7 @@ model problems_levels {
 
 model problems_exemples {
   id          Int      @id @default(autoincrement())
-  problem     problems @relation(fields: [problemId], references: [id])
+  problem     problems @relation(fields: [problemId], references: [id], onDelete: Cascade)
   problemId   Int
   input       String
   output      String
@@ -47,7 +47,7 @@ model problems_exemples {
 
 model problems_testcase {
   id             Int      @id @default(autoincrement())
-  problem        problems @relation(fields: [problemId], references: [id])
+  problem        problems @relation(fields: [problemId], references: [id], onDelete: Cascade)
   problemId      Int
   input          String
   expectedOutput String

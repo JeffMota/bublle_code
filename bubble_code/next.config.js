@@ -5,6 +5,7 @@ const nextConfig = {
 }
 
 module.exports = removeImports({
+  output: 'standalone',
   experimental: { esmExternals: true }
 });
 

@@ -10,17 +10,17 @@ async function getProblemsList() {
       description: true,
       level: {
         select: {
-          name: true
-        }
-      }
-    }
-  })
+          name: true,
+        },
+      },
+    },
+  });
 }
 
 async function getProblemById(id: number) {
   return await prisma.problems.findFirst({
     where: {
-      id
+      id,
     },
     select: {
       id: true,
@@ -29,37 +29,40 @@ async function getProblemById(id: number) {
       code: true,
       level: {
         select: {
-          name: true
-        }
+          name: true,
+        },
       },
-      exemples: true
-    }
-  })
+      exemples: true,
+    },
+  });
 }
 
 async function getProblemTestCases(id: number) {
-  return await prisma.problems_testcase.findMany(
-    {
-      where: { problemId: id }
-    })
+  return await prisma.problems_testcase.findMany({
+    where: { problemId: id },
+  });
 }
 
 async function addProblem(data: inputProblemType): Promise<problems> {
   return await prisma.problems.create({
-    data
-  })
+    data,
+  });
 }
 
 async function addExemples(data: Omit<problems_exemples, "id">[]) {
   await prisma.problems_exemples.createMany({
-    data
-  })
+    data,
+  });
 }
 
 async function addTestCases(data: Omit<problems_testcase, "id">[]) {
   await prisma.problems_testcase.createMany({
-    data
-  })
+    data,
+  });
+}
+
+async function deleteProblem(id: number) {
+  await prisma.problems.delete({ where: { id } });
 }
 
 export default {
@@ -68,5 +71,6 @@ export default {
   getProblemTestCases,
   addProblem,
   addExemples,
-  addTestCases
-}
+  addTestCases,
+  deleteProblem,
+};
