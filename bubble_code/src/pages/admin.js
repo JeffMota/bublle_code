@@ -44,6 +44,23 @@ export default function Admin() {
 
   const router = useRouter()
 
+  async function fetchList() {
+    try {
+      const config = getToken()
+      const response = await axios.get(process.env.NEXT_PUBLIC_BUBBLE_API_URL + '/problems/list', config)
+      setList(response.data)
+      setSelectedProblem(response.data[0])
+    } catch (error) {
+      toast('Não foi possível carregar os problemas')
+      console.log(error)
+      if (error.response.status === 401) {
+        setTimeout(() => {
+          router.push('/')
+        }, 2000)
+      }
+    }
+  }
+
   async function handleSaveProblem() {
     setCurrentModal('problem')
 
@@ -76,9 +93,9 @@ export default function Admin() {
     }
 
     try {
-      const response = await axios.post(process.env.NEXT_PUBLIC_BUBBLE_API_URL + `/problems/add`, body, config)
+      await axios.post(process.env.NEXT_PUBLIC_BUBBLE_API_URL + `/problems/add`, body, config)
       toast("Problema salvo com sucesso :)")
-      fetchList()
+      await fetchList()
     } catch (error) {
       console.log(error.message)
       toast('Não foi possível salvar o problema')
@@ -91,23 +108,22 @@ export default function Admin() {
     }
   }
 
-  useEffect(() => {
-    async function fetchList() {
+  async function handleDeleteProblem(id) {
+    if (confirm('Deseja deletar esse problema?')) {
+      const config = getToken()
+
       try {
-        const config = getToken()
-        const response = await axios.get(process.env.NEXT_PUBLIC_BUBBLE_API_URL + '/problems/list', config)
-        setList(response.data)
-        setSelectedProblem(response.data[0])
+        await axios.delete(process.env.NEXT_PUBLIC_BUBBLE_API_URL + `/problems/${id}`, config)
+        toast('Problema deletado')
+        await fetchList()
       } catch (error) {
-        toast('Não foi possível carregar os problemas')
-        console.log(error)
-        if (error.response.status === 401) {
-          setTimeout(() => {
-            router.push('/')
-          }, 2000)
-        }
+        console.error(error.message)
+        toast('Não foi possível deletar esse problema')
       }
     }
+  }
+
+  useEffect(() => {
     fetchList()
   }, [])
 
@@ -147,7 +163,7 @@ export default function Admin() {
           <div className='flex-1 h-72 overflow-scroll'>
             {
               list ?
-                list.map(p => <ProblemTagAdm setProblem={setSelectedProblem} problem={p} key={p.id} title={p.title} dificult={p.level.name} />)
+                list.map(p => <ProblemTagAdm handleDeleteProblem={handleDeleteProblem} setProblem={setSelectedProblem} problemId={p.id} problem={p} key={p.id} title={p.title} dificult={p.level.name} />)
                 :
                 <div>
                   <ProblemTagAdm />

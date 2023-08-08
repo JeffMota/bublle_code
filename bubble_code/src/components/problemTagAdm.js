@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import LoadingText from "./loadingText";
 import { Edit3, XCircle } from "lucide-react";
 
-export default function ProblemTagAdm({ title, dificult, problemId, problem, setProblem }) {
+export default function ProblemTagAdm({ title, handleDeleteProblem, dificult, problemId, problem, setProblem }) {
   const router = useRouter()
 
   return (
@@ -16,7 +16,7 @@ export default function ProblemTagAdm({ title, dificult, problemId, problem, set
       <div className='flex w-28 h-full items-center justify-center px-8 hover:text-pallet-6'>
         <Edit3 />
       </div>
-      <div className='flex w-28 h-full items-center justify-center px-8 hover:text-red-500'>
+      <div onClick={() => handleDeleteProblem(problemId)} className='flex w-28 h-full items-center justify-center px-8 hover:text-red-500'>
         <XCircle />
       </div>
     </div>

@@ -56,6 +56,7 @@ async function deleteProblem(id: number) {
 
   await problemsRepository.deleteProblem(id);
 }
+
 export default {
   getProblemsList,
   getProblemById,
