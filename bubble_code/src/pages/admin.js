@@ -26,6 +26,7 @@ export default function Admin() {
   const [selectedProblem, setSelectedProblem] = useState(null)
   const [addingNewProblem, setAddingNewProblem] = useState(false)
   const [currentModal, setCurrentModal] = useState('problem')
+  const [searchList, setSearchList] = useState([])
 
   const [code, setCode] = useState('')
   const [level, setLevel] = useState('Fácil')
@@ -49,6 +50,7 @@ export default function Admin() {
       const config = getToken()
       const response = await axios.get(process.env.NEXT_PUBLIC_BUBBLE_API_URL + '/problems/list', config)
       setList(response.data)
+      setSearchList(response.data)
       setSelectedProblem(response.data[0])
     } catch (error) {
       toast('Não foi possível carregar os problemas')
@@ -62,7 +64,6 @@ export default function Admin() {
   }
 
   async function handleSaveProblem() {
-    setCurrentModal('problem')
 
     const config = getToken()
 
@@ -95,6 +96,7 @@ export default function Admin() {
     try {
       await axios.post(process.env.NEXT_PUBLIC_BUBBLE_API_URL + `/problems/add`, body, config)
       toast("Problema salvo com sucesso :)")
+      setAddingNewProblem(false)
       await fetchList()
     } catch (error) {
       console.log(error.message)
@@ -123,6 +125,15 @@ export default function Admin() {
     }
   }
 
+  function listFilter(value) {
+    if (value.length > 0) {
+      let aux = list.filter(problem => problem.title.toLowerCase().includes(value.toLowerCase()))
+      setSearchList(aux)
+    }
+    else setSearchList(list)
+    // console.log(aux)
+  }
+
   useEffect(() => {
     fetchList()
   }, [])
@@ -140,7 +151,7 @@ export default function Admin() {
           <div className='flex-1'>
             <h2 className={`text-2xl ${bebasNeue.variable} font-sans`}>buscar</h2>
             <div className='flex w-full h-12 bg-gradient-to-r from-pallet-5 rounded-lg overflow-hidden'>
-              <input className='bg-transparent px-6 flex-1 outline-none' placeholder='Título do problema' type='text' />
+              <input onChange={(e) => listFilter(e.target.value)} className='bg-transparent px-6 flex-1 outline-none' placeholder='Título do problema' type='text' />
               <div className='flex text-pallet-6 items-center justify-center w-16 cursor-pointer'>
                 <Search />
               </div>
@@ -162,9 +173,8 @@ export default function Admin() {
         <div className='flex gap-4'>
           <div className='flex-1 h-72 overflow-scroll'>
             {
-              list ?
-                list.map(p => <ProblemTagAdm handleDeleteProblem={handleDeleteProblem} setProblem={setSelectedProblem} problemId={p.id} problem={p} key={p.id} title={p.title} dificult={p.level.name} />)
-                :
+              searchList.length > 0 ?
+                searchList.map(p => <ProblemTagAdm handleDeleteProblem={handleDeleteProblem} setProblem={setSelectedProblem} problemId={p.id} problem={p} key={p.id} title={p.title} dificult={p.level.name} />) :
                 <div>
                   <ProblemTagAdm />
                   <ProblemTagAdm />
